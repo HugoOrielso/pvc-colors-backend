@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         UserRole @default(ADMIN)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  refreshToken String?
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+}
+
+model ProductLine {
+  id          String @id @default(uuid())
+  slug        String @unique // industrial, wood, architectural, others
+  name        String
+  description String
+  image       String
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String @id @default(uuid())
+  slug        String @unique
+  name        String
+  description String @db.Text
+  image       String? // opcional: imagen principal legacy
+  recommendations String? @db.Text
+  technicalSheetUrl String?
+
+  productLineId String
+  productLine   ProductLine @relation(fields: [productLineId], references: [id], onDelete: Cascade)
+
+  colors        ProductColor[]
+  presentations ProductPresentation[]
+  images        ProductImage[]
+  orderItems    OrderItem[]
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  publicId  String?
+  alt       String?
+  position  Int      @default(0)
+  isMain    Boolean  @default(false)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model ProductPresentation {
+  id    String @id @default(uuid())
+  name  String // Galón, Cuarto, Balde 5 galones
+
+  price Int
+  stock Int @default(0)
+  sku   String?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  orderItems OrderItem[]
+  active    Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, name])
+}
+
+model ProductColor {
+  id    String @id @default(uuid())
+  name  String?
+  value String // white, red, #FFFFFF, rgb(...)
+  active    Boolean  @default(true)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, value])
+}
+
+model Customer {
+  id        String @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  document  String?
+  address   String?
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String @id @default(uuid())
+  orderNumber String @unique
+
+  status OrderStatus @default(DRAFT)
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  subtotal Decimal @default(0)
+  tax      Decimal @default(0)
+  shipping Decimal @default(0)
+  total    Decimal @default(0)
+
+  currency String @default("COP")
+
+  items    OrderItem[]
+  invoice  Invoice?
+
+  paymentProvider String?
+  paymentReference String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  paidAt    DateTime?
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  presentationId String?
+  presentation   ProductPresentation? @relation(fields: [presentationId], references: [id])
+
+  productName       String
+  presentationName String?
+  color            String?
+
+  quantity  Int
+  unitPrice Decimal
+  total     Decimal
+}
+
+model Invoice {
+  id            String @id @default(uuid())
+  invoiceNumber String @unique
+
+  orderId String @unique
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  status InvoiceStatus @default(ISSUED)
+
+  subtotal Decimal
+  tax      Decimal
+  shipping Decimal
+  total    Decimal
+
+  pdfUrl String?
+
+  issuedAt DateTime @default(now())
+  paidAt   DateTime?
+}
+
+enum OrderStatus {
+  DRAFT
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  CANCELLED
+}
