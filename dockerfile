@@ -25,6 +25,7 @@ ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN pnpm prisma:generate
 RUN pnpm build
 
+LABEL org.opencontainers.image.source https://github.com/hugoorielso/pvc-colors-backend
 
 FROM node:22-alpine AS runner
 

@@ -18,9 +18,7 @@ const app = express();
 // ✅ Lista centralizada reutilizada en cors y csrf
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
-  "https://arrozandinagroup.com",
-  "https://frontend.arrozandinagroup.com",
-  "https://theaceous-indorsable-lilliana.ngrok-free.dev",
+  "https://frontend.pinturaspvccolors.com",
 ];
 
 const UPLOAD_BASE_DIR =
