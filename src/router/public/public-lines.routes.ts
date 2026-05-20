@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getProductLinesController } from "../../controllers/lines/lines.controller";
 import { getPublicProductLineByIdController } from "../../controllers/public/lines/productLine.controller";
+import { getProductLinesController } from "../../controllers/public/lines/getLines/getLines.controller";
 
 const publicLinesRouter = Router();
 

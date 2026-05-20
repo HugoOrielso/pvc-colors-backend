@@ -100,6 +100,7 @@ export const ProductLineScalarFieldEnum = {
   name: 'name',
   description: 'description',
   image: 'image',
+  active: 'active',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
