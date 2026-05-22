@@ -22,6 +22,14 @@ function parseJsonArray<T>(value: unknown): T[] | undefined {
   }
 }
 
+function parseNullableNumber(value: unknown): number | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+
+  const numberValue = Number(value);
+  return Number.isNaN(numberValue) ? undefined : numberValue;
+}
+
 type ProductFiles = {
   images?: Express.Multer.File[];
   technicalSheet?: Express.Multer.File[];
@@ -106,6 +114,20 @@ export async function updateProductController(req: Request, res: Response) {
       value: string;
     }>(req.body.colors);
 
+    const colorGroups = parseJsonArray<{
+      name: string;
+      description?: string | null;
+      colors: {
+        name?: string | null;
+        value: string;
+      }[];
+    }>(req.body.colorGroups);
+
+    const features = parseJsonArray<{
+      name: string;
+      description?: string | null;
+    }>(req.body.features);
+
     const presentations = parseJsonArray<{
       name: string;
       price: number;
@@ -120,7 +142,16 @@ export async function updateProductController(req: Request, res: Response) {
       recommendations: req.body.recommendations,
       productLineId: req.body.productLineId,
 
+      coverageMinM2PerGallon: parseNullableNumber(
+        req.body.coverageMinM2PerGallon
+      ),
+      coverageMaxM2PerGallon: parseNullableNumber(
+        req.body.coverageMaxM2PerGallon
+      ),
+
       colors,
+      colorGroups,
+      features,
       presentations,
       existingImages,
 

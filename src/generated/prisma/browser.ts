@@ -38,6 +38,11 @@ export type Product = Prisma.ProductModel
  */
 export type ProductImage = Prisma.ProductImageModel
 /**
+ * Model ProductFeature
+ * 
+ */
+export type ProductFeature = Prisma.ProductFeatureModel
+/**
  * Model ProductPresentation
  * 
  */
@@ -47,6 +52,11 @@ export type ProductPresentation = Prisma.ProductPresentationModel
  * 
  */
 export type ProductColor = Prisma.ProductColorModel
+/**
+ * Model ProductColorGroup
+ * 
+ */
+export type ProductColorGroup = Prisma.ProductColorGroupModel
 /**
  * Model Customer
  * 
@@ -67,3 +77,13 @@ export type OrderItem = Prisma.OrderItemModel
  * 
  */
 export type Invoice = Prisma.InvoiceModel
+/**
+ * Model Article
+ * 
+ */
+export type Article = Prisma.ArticleModel
+/**
+ * Model Distributor
+ * 
+ */
+export type Distributor = Prisma.DistributorModel

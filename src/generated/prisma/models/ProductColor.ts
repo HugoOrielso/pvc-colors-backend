@@ -30,6 +30,7 @@ export type ProductColorMinAggregateOutputType = {
   value: string | null
   active: boolean | null
   productId: string | null
+  groupId: string | null
 }
 
 export type ProductColorMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type ProductColorMaxAggregateOutputType = {
   value: string | null
   active: boolean | null
   productId: string | null
+  groupId: string | null
 }
 
 export type ProductColorCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type ProductColorCountAggregateOutputType = {
   value: number
   active: number
   productId: number
+  groupId: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type ProductColorMinAggregateInputType = {
   value?: true
   active?: true
   productId?: true
+  groupId?: true
 }
 
 export type ProductColorMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type ProductColorMaxAggregateInputType = {
   value?: true
   active?: true
   productId?: true
+  groupId?: true
 }
 
 export type ProductColorCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type ProductColorCountAggregateInputType = {
   value?: true
   active?: true
   productId?: true
+  groupId?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type ProductColorGroupByOutputType = {
   value: string
   active: boolean
   productId: string
+  groupId: string | null
   _count: ProductColorCountAggregateOutputType | null
   _min: ProductColorMinAggregateOutputType | null
   _max: ProductColorMaxAggregateOutputType | null
@@ -182,7 +189,9 @@ export type ProductColorWhereInput = {
   value?: Prisma.StringFilter<"ProductColor"> | string
   active?: Prisma.BoolFilter<"ProductColor"> | boolean
   productId?: Prisma.StringFilter<"ProductColor"> | string
+  groupId?: Prisma.StringNullableFilter<"ProductColor"> | string | null
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  group?: Prisma.XOR<Prisma.ProductColorGroupNullableScalarRelationFilter, Prisma.ProductColorGroupWhereInput> | null
 }
 
 export type ProductColorOrderByWithRelationInput = {
@@ -191,7 +200,9 @@ export type ProductColorOrderByWithRelationInput = {
   value?: Prisma.SortOrder
   active?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
+  group?: Prisma.ProductColorGroupOrderByWithRelationInput
 }
 
 export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
@@ -204,7 +215,9 @@ export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
   value?: Prisma.StringFilter<"ProductColor"> | string
   active?: Prisma.BoolFilter<"ProductColor"> | boolean
   productId?: Prisma.StringFilter<"ProductColor"> | string
+  groupId?: Prisma.StringNullableFilter<"ProductColor"> | string | null
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  group?: Prisma.XOR<Prisma.ProductColorGroupNullableScalarRelationFilter, Prisma.ProductColorGroupWhereInput> | null
 }, "id" | "productId_value">
 
 export type ProductColorOrderByWithAggregationInput = {
@@ -213,6 +226,7 @@ export type ProductColorOrderByWithAggregationInput = {
   value?: Prisma.SortOrder
   active?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProductColorCountOrderByAggregateInput
   _max?: Prisma.ProductColorMaxOrderByAggregateInput
   _min?: Prisma.ProductColorMinOrderByAggregateInput
@@ -227,6 +241,7 @@ export type ProductColorScalarWhereWithAggregatesInput = {
   value?: Prisma.StringWithAggregatesFilter<"ProductColor"> | string
   active?: Prisma.BoolWithAggregatesFilter<"ProductColor"> | boolean
   productId?: Prisma.StringWithAggregatesFilter<"ProductColor"> | string
+  groupId?: Prisma.StringNullableWithAggregatesFilter<"ProductColor"> | string | null
 }
 
 export type ProductColorCreateInput = {
@@ -235,6 +250,7 @@ export type ProductColorCreateInput = {
   value: string
   active?: boolean
   product: Prisma.ProductCreateNestedOneWithoutColorsInput
+  group?: Prisma.ProductColorGroupCreateNestedOneWithoutColorsInput
 }
 
 export type ProductColorUncheckedCreateInput = {
@@ -243,6 +259,7 @@ export type ProductColorUncheckedCreateInput = {
   value: string
   active?: boolean
   productId: string
+  groupId?: string | null
 }
 
 export type ProductColorUpdateInput = {
@@ -251,6 +268,7 @@ export type ProductColorUpdateInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   product?: Prisma.ProductUpdateOneRequiredWithoutColorsNestedInput
+  group?: Prisma.ProductColorGroupUpdateOneWithoutColorsNestedInput
 }
 
 export type ProductColorUncheckedUpdateInput = {
@@ -259,6 +277,7 @@ export type ProductColorUncheckedUpdateInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProductColorCreateManyInput = {
@@ -267,6 +286,7 @@ export type ProductColorCreateManyInput = {
   value: string
   active?: boolean
   productId: string
+  groupId?: string | null
 }
 
 export type ProductColorUpdateManyMutationInput = {
@@ -282,6 +302,7 @@ export type ProductColorUncheckedUpdateManyInput = {
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProductColorListRelationFilter = {
@@ -305,6 +326,7 @@ export type ProductColorCountOrderByAggregateInput = {
   value?: Prisma.SortOrder
   active?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ProductColorMaxOrderByAggregateInput = {
@@ -313,6 +335,7 @@ export type ProductColorMaxOrderByAggregateInput = {
   value?: Prisma.SortOrder
   active?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ProductColorMinOrderByAggregateInput = {
@@ -321,6 +344,7 @@ export type ProductColorMinOrderByAggregateInput = {
   value?: Prisma.SortOrder
   active?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ProductColorCreateNestedManyWithoutProductInput = {
@@ -365,11 +389,54 @@ export type ProductColorUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductColorScalarWhereInput | Prisma.ProductColorScalarWhereInput[]
 }
 
+export type ProductColorCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput> | Prisma.ProductColorCreateWithoutGroupInput[] | Prisma.ProductColorUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ProductColorCreateOrConnectWithoutGroupInput | Prisma.ProductColorCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ProductColorCreateManyGroupInputEnvelope
+  connect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+}
+
+export type ProductColorUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput> | Prisma.ProductColorCreateWithoutGroupInput[] | Prisma.ProductColorUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ProductColorCreateOrConnectWithoutGroupInput | Prisma.ProductColorCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ProductColorCreateManyGroupInputEnvelope
+  connect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+}
+
+export type ProductColorUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput> | Prisma.ProductColorCreateWithoutGroupInput[] | Prisma.ProductColorUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ProductColorCreateOrConnectWithoutGroupInput | Prisma.ProductColorCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ProductColorUpsertWithWhereUniqueWithoutGroupInput | Prisma.ProductColorUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ProductColorCreateManyGroupInputEnvelope
+  set?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  disconnect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  delete?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  connect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  update?: Prisma.ProductColorUpdateWithWhereUniqueWithoutGroupInput | Prisma.ProductColorUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ProductColorUpdateManyWithWhereWithoutGroupInput | Prisma.ProductColorUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ProductColorScalarWhereInput | Prisma.ProductColorScalarWhereInput[]
+}
+
+export type ProductColorUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput> | Prisma.ProductColorCreateWithoutGroupInput[] | Prisma.ProductColorUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ProductColorCreateOrConnectWithoutGroupInput | Prisma.ProductColorCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ProductColorUpsertWithWhereUniqueWithoutGroupInput | Prisma.ProductColorUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ProductColorCreateManyGroupInputEnvelope
+  set?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  disconnect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  delete?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  connect?: Prisma.ProductColorWhereUniqueInput | Prisma.ProductColorWhereUniqueInput[]
+  update?: Prisma.ProductColorUpdateWithWhereUniqueWithoutGroupInput | Prisma.ProductColorUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ProductColorUpdateManyWithWhereWithoutGroupInput | Prisma.ProductColorUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ProductColorScalarWhereInput | Prisma.ProductColorScalarWhereInput[]
+}
+
 export type ProductColorCreateWithoutProductInput = {
   id?: string
   name?: string | null
   value: string
   active?: boolean
+  group?: Prisma.ProductColorGroupCreateNestedOneWithoutColorsInput
 }
 
 export type ProductColorUncheckedCreateWithoutProductInput = {
@@ -377,6 +444,7 @@ export type ProductColorUncheckedCreateWithoutProductInput = {
   name?: string | null
   value: string
   active?: boolean
+  groupId?: string | null
 }
 
 export type ProductColorCreateOrConnectWithoutProductInput = {
@@ -414,6 +482,49 @@ export type ProductColorScalarWhereInput = {
   value?: Prisma.StringFilter<"ProductColor"> | string
   active?: Prisma.BoolFilter<"ProductColor"> | boolean
   productId?: Prisma.StringFilter<"ProductColor"> | string
+  groupId?: Prisma.StringNullableFilter<"ProductColor"> | string | null
+}
+
+export type ProductColorCreateWithoutGroupInput = {
+  id?: string
+  name?: string | null
+  value: string
+  active?: boolean
+  product: Prisma.ProductCreateNestedOneWithoutColorsInput
+}
+
+export type ProductColorUncheckedCreateWithoutGroupInput = {
+  id?: string
+  name?: string | null
+  value: string
+  active?: boolean
+  productId: string
+}
+
+export type ProductColorCreateOrConnectWithoutGroupInput = {
+  where: Prisma.ProductColorWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput>
+}
+
+export type ProductColorCreateManyGroupInputEnvelope = {
+  data: Prisma.ProductColorCreateManyGroupInput | Prisma.ProductColorCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type ProductColorUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ProductColorWhereUniqueInput
+  update: Prisma.XOR<Prisma.ProductColorUpdateWithoutGroupInput, Prisma.ProductColorUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.ProductColorCreateWithoutGroupInput, Prisma.ProductColorUncheckedCreateWithoutGroupInput>
+}
+
+export type ProductColorUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ProductColorWhereUniqueInput
+  data: Prisma.XOR<Prisma.ProductColorUpdateWithoutGroupInput, Prisma.ProductColorUncheckedUpdateWithoutGroupInput>
+}
+
+export type ProductColorUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.ProductColorScalarWhereInput
+  data: Prisma.XOR<Prisma.ProductColorUpdateManyMutationInput, Prisma.ProductColorUncheckedUpdateManyWithoutGroupInput>
 }
 
 export type ProductColorCreateManyProductInput = {
@@ -421,6 +532,7 @@ export type ProductColorCreateManyProductInput = {
   name?: string | null
   value: string
   active?: boolean
+  groupId?: string | null
 }
 
 export type ProductColorUpdateWithoutProductInput = {
@@ -428,6 +540,7 @@ export type ProductColorUpdateWithoutProductInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  group?: Prisma.ProductColorGroupUpdateOneWithoutColorsNestedInput
 }
 
 export type ProductColorUncheckedUpdateWithoutProductInput = {
@@ -435,6 +548,7 @@ export type ProductColorUncheckedUpdateWithoutProductInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProductColorUncheckedUpdateManyWithoutProductInput = {
@@ -442,6 +556,39 @@ export type ProductColorUncheckedUpdateManyWithoutProductInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   value?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ProductColorCreateManyGroupInput = {
+  id?: string
+  name?: string | null
+  value: string
+  active?: boolean
+  productId: string
+}
+
+export type ProductColorUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  value?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  product?: Prisma.ProductUpdateOneRequiredWithoutColorsNestedInput
+}
+
+export type ProductColorUncheckedUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  value?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type ProductColorUncheckedUpdateManyWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  value?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -452,7 +599,9 @@ export type ProductColorSelect<ExtArgs extends runtime.Types.Extensions.Internal
   value?: boolean
   active?: boolean
   productId?: boolean
+  groupId?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }, ExtArgs["result"]["productColor"]>
 
 export type ProductColorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -461,7 +610,9 @@ export type ProductColorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   value?: boolean
   active?: boolean
   productId?: boolean
+  groupId?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }, ExtArgs["result"]["productColor"]>
 
 export type ProductColorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -470,7 +621,9 @@ export type ProductColorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   value?: boolean
   active?: boolean
   productId?: boolean
+  groupId?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }, ExtArgs["result"]["productColor"]>
 
 export type ProductColorSelectScalar = {
@@ -479,23 +632,28 @@ export type ProductColorSelectScalar = {
   value?: boolean
   active?: boolean
   productId?: boolean
+  groupId?: boolean
 }
 
-export type ProductColorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "value" | "active" | "productId", ExtArgs["result"]["productColor"]>
+export type ProductColorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "value" | "active" | "productId" | "groupId", ExtArgs["result"]["productColor"]>
 export type ProductColorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }
 export type ProductColorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }
 export type ProductColorIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ProductColor$groupArgs<ExtArgs>
 }
 
 export type $ProductColorPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductColor"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
+    group: Prisma.$ProductColorGroupPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -503,6 +661,7 @@ export type $ProductColorPayload<ExtArgs extends runtime.Types.Extensions.Intern
     value: string
     active: boolean
     productId: string
+    groupId: string | null
   }, ExtArgs["result"]["productColor"]>
   composites: {}
 }
@@ -898,6 +1057,7 @@ readonly fields: ProductColorFieldRefs;
 export interface Prisma__ProductColorClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  group<T extends Prisma.ProductColor$groupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductColor$groupArgs<ExtArgs>>): Prisma.Prisma__ProductColorGroupClient<runtime.Types.Result.GetResult<Prisma.$ProductColorGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -932,6 +1092,7 @@ export interface ProductColorFieldRefs {
   readonly value: Prisma.FieldRef<"ProductColor", 'String'>
   readonly active: Prisma.FieldRef<"ProductColor", 'Boolean'>
   readonly productId: Prisma.FieldRef<"ProductColor", 'String'>
+  readonly groupId: Prisma.FieldRef<"ProductColor", 'String'>
 }
     
 
@@ -1330,6 +1491,25 @@ export type ProductColorDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many ProductColors to delete.
    */
   limit?: number
+}
+
+/**
+ * ProductColor.group
+ */
+export type ProductColor$groupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductColorGroup
+   */
+  select?: Prisma.ProductColorGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductColorGroup
+   */
+  omit?: Prisma.ProductColorGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductColorGroupInclude<ExtArgs> | null
+  where?: Prisma.ProductColorGroupWhereInput
 }
 
 /**

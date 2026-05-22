@@ -32,26 +32,29 @@ model ProductLine {
   image       String
 
   products Product[]
-  active    Boolean  @default(true)
+  active   Boolean   @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id          String @id @default(uuid())
-  slug        String @unique
-  name        String
-  description String @db.Text
-  image       String? // opcional: imagen principal legacy
-  recommendations String? @db.Text
-  technicalSheetUrl String?
-
-  productLineId String
-  productLine   ProductLine @relation(fields: [productLineId], references: [id], onDelete: Cascade)
+  id                     String      @id @default(uuid())
+  slug                   String      @unique
+  name                   String
+  description            String      @db.Text
+  image                  String?
+  recommendations        String?     @db.Text
+  technicalSheetUrl      String?
+  coverageMinM2PerGallon Float?
+  coverageMaxM2PerGallon Float?
+  productLineId          String
+  productLine            ProductLine @relation(fields: [productLineId], references: [id], onDelete: Cascade)
 
   colors        ProductColor[]
+  colorGroups   ProductColorGroup[]
   presentations ProductPresentation[]
+  features      ProductFeature[]
   images        ProductImage[]
   orderItems    OrderItem[]
 
@@ -62,12 +65,12 @@ model Product {
 }
 
 model ProductImage {
-  id        String   @id @default(uuid())
-  url       String
-  publicId  String?
-  alt       String?
-  position  Int      @default(0)
-  isMain    Boolean  @default(false)
+  id       String  @id @default(uuid())
+  url      String
+  publicId String?
+  alt      String?
+  position Int     @default(0)
+  isMain   Boolean @default(false)
 
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -78,19 +81,35 @@ model ProductImage {
   @@index([productId])
 }
 
+model ProductFeature {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  active      Boolean @default(true)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, name])
+  @@index([productId])
+}
+
 model ProductPresentation {
-  id    String @id @default(uuid())
-  name  String // Galón, Cuarto, Balde 5 galones
+  id   String @id @default(uuid())
+  name String
 
   price Int
-  stock Int @default(0)
+  stock Int     @default(0)
   sku   String?
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   orderItems OrderItem[]
-  active    Boolean  @default(true)
+  active     Boolean     @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -99,23 +118,48 @@ model ProductPresentation {
 }
 
 model ProductColor {
-  id    String @id @default(uuid())
-  name  String?
-  value String // white, red, #FFFFFF, rgb(...)
-  active    Boolean  @default(true)
+  id     String  @id @default(uuid())
+  name   String?
+  value  String
+  active Boolean @default(true)
+
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  groupId String?
+  group   ProductColorGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
   @@unique([productId, value])
+  @@index([productId])
+  @@index([groupId])
+}
+
+model ProductColorGroup {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  position    Int     @default(0)
+  active      Boolean @default(true)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  colors ProductColor[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, name])
+  @@index([productId])
 }
 
 model Customer {
-  id        String @id @default(uuid())
-  name      String
-  email     String
-  phone     String?
-  document  String?
-  address   String?
+  id       String  @id @default(uuid())
+  name     String
+  email    String
+  phone    String?
+  document String?
+  address  String?
 
   orders Order[]
 
@@ -139,14 +183,14 @@ model Order {
 
   currency String @default("COP")
 
-  items    OrderItem[]
-  invoice  Invoice?
+  items   OrderItem[]
+  invoice Invoice?
 
-  paymentProvider String?
+  paymentProvider  String?
   paymentReference String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   paidAt    DateTime?
 }
 
@@ -154,7 +198,7 @@ model OrderItem {
   id String @id @default(uuid())
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
@@ -162,7 +206,7 @@ model OrderItem {
   presentationId String?
   presentation   ProductPresentation? @relation(fields: [presentationId], references: [id])
 
-  productName       String
+  productName      String
   presentationName String?
   color            String?
 
@@ -176,7 +220,7 @@ model Invoice {
   invoiceNumber String @unique
 
   orderId String @unique
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   status InvoiceStatus @default(ISSUED)
 
@@ -187,8 +231,31 @@ model Invoice {
 
   pdfUrl String?
 
-  issuedAt DateTime @default(now())
+  issuedAt DateTime  @default(now())
   paidAt   DateTime?
+}
+
+model Article {
+  id       String @id @default(uuid())
+  title    String
+  markdown String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Distributor {
+  id        String   @id @default(uuid())
+  name      String
+  city      String
+  address   String
+  phone     String
+  whatsapp  String
+  keyword   String
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum OrderStatus {

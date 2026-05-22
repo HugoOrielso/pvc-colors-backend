@@ -20,8 +20,20 @@ export type ProductModel = runtime.Types.Result.DefaultSelection<Prisma.$Product
 
 export type AggregateProduct = {
   _count: ProductCountAggregateOutputType | null
+  _avg: ProductAvgAggregateOutputType | null
+  _sum: ProductSumAggregateOutputType | null
   _min: ProductMinAggregateOutputType | null
   _max: ProductMaxAggregateOutputType | null
+}
+
+export type ProductAvgAggregateOutputType = {
+  coverageMinM2PerGallon: number | null
+  coverageMaxM2PerGallon: number | null
+}
+
+export type ProductSumAggregateOutputType = {
+  coverageMinM2PerGallon: number | null
+  coverageMaxM2PerGallon: number | null
 }
 
 export type ProductMinAggregateOutputType = {
@@ -32,6 +44,8 @@ export type ProductMinAggregateOutputType = {
   image: string | null
   recommendations: string | null
   technicalSheetUrl: string | null
+  coverageMinM2PerGallon: number | null
+  coverageMaxM2PerGallon: number | null
   productLineId: string | null
   isActive: boolean | null
   createdAt: Date | null
@@ -46,6 +60,8 @@ export type ProductMaxAggregateOutputType = {
   image: string | null
   recommendations: string | null
   technicalSheetUrl: string | null
+  coverageMinM2PerGallon: number | null
+  coverageMaxM2PerGallon: number | null
   productLineId: string | null
   isActive: boolean | null
   createdAt: Date | null
@@ -60,6 +76,8 @@ export type ProductCountAggregateOutputType = {
   image: number
   recommendations: number
   technicalSheetUrl: number
+  coverageMinM2PerGallon: number
+  coverageMaxM2PerGallon: number
   productLineId: number
   isActive: number
   createdAt: number
@@ -67,6 +85,16 @@ export type ProductCountAggregateOutputType = {
   _all: number
 }
 
+
+export type ProductAvgAggregateInputType = {
+  coverageMinM2PerGallon?: true
+  coverageMaxM2PerGallon?: true
+}
+
+export type ProductSumAggregateInputType = {
+  coverageMinM2PerGallon?: true
+  coverageMaxM2PerGallon?: true
+}
 
 export type ProductMinAggregateInputType = {
   id?: true
@@ -76,6 +104,8 @@ export type ProductMinAggregateInputType = {
   image?: true
   recommendations?: true
   technicalSheetUrl?: true
+  coverageMinM2PerGallon?: true
+  coverageMaxM2PerGallon?: true
   productLineId?: true
   isActive?: true
   createdAt?: true
@@ -90,6 +120,8 @@ export type ProductMaxAggregateInputType = {
   image?: true
   recommendations?: true
   technicalSheetUrl?: true
+  coverageMinM2PerGallon?: true
+  coverageMaxM2PerGallon?: true
   productLineId?: true
   isActive?: true
   createdAt?: true
@@ -104,6 +136,8 @@ export type ProductCountAggregateInputType = {
   image?: true
   recommendations?: true
   technicalSheetUrl?: true
+  coverageMinM2PerGallon?: true
+  coverageMaxM2PerGallon?: true
   productLineId?: true
   isActive?: true
   createdAt?: true
@@ -149,6 +183,18 @@ export type ProductAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProductAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProductSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProductMinAggregateInputType
@@ -179,6 +225,8 @@ export type ProductGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ProductCountAggregateInputType | true
+  _avg?: ProductAvgAggregateInputType
+  _sum?: ProductSumAggregateInputType
   _min?: ProductMinAggregateInputType
   _max?: ProductMaxAggregateInputType
 }
@@ -191,11 +239,15 @@ export type ProductGroupByOutputType = {
   image: string | null
   recommendations: string | null
   technicalSheetUrl: string | null
+  coverageMinM2PerGallon: number | null
+  coverageMaxM2PerGallon: number | null
   productLineId: string
   isActive: boolean
   createdAt: Date
   updatedAt: Date
   _count: ProductCountAggregateOutputType | null
+  _avg: ProductAvgAggregateOutputType | null
+  _sum: ProductSumAggregateOutputType | null
   _min: ProductMinAggregateOutputType | null
   _max: ProductMaxAggregateOutputType | null
 }
@@ -226,13 +278,17 @@ export type ProductWhereInput = {
   image?: Prisma.StringNullableFilter<"Product"> | string | null
   recommendations?: Prisma.StringNullableFilter<"Product"> | string | null
   technicalSheetUrl?: Prisma.StringNullableFilter<"Product"> | string | null
+  coverageMinM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
+  coverageMaxM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
   productLineId?: Prisma.StringFilter<"Product"> | string
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   productLine?: Prisma.XOR<Prisma.ProductLineScalarRelationFilter, Prisma.ProductLineWhereInput>
   colors?: Prisma.ProductColorListRelationFilter
+  colorGroups?: Prisma.ProductColorGroupListRelationFilter
   presentations?: Prisma.ProductPresentationListRelationFilter
+  features?: Prisma.ProductFeatureListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
 }
@@ -245,13 +301,17 @@ export type ProductOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   recommendations?: Prisma.SortOrderInput | Prisma.SortOrder
   technicalSheetUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  coverageMinM2PerGallon?: Prisma.SortOrderInput | Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrderInput | Prisma.SortOrder
   productLineId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   productLine?: Prisma.ProductLineOrderByWithRelationInput
   colors?: Prisma.ProductColorOrderByRelationAggregateInput
+  colorGroups?: Prisma.ProductColorGroupOrderByRelationAggregateInput
   presentations?: Prisma.ProductPresentationOrderByRelationAggregateInput
+  features?: Prisma.ProductFeatureOrderByRelationAggregateInput
   images?: Prisma.ProductImageOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
 }
@@ -267,13 +327,17 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"Product"> | string | null
   recommendations?: Prisma.StringNullableFilter<"Product"> | string | null
   technicalSheetUrl?: Prisma.StringNullableFilter<"Product"> | string | null
+  coverageMinM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
+  coverageMaxM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
   productLineId?: Prisma.StringFilter<"Product"> | string
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   productLine?: Prisma.XOR<Prisma.ProductLineScalarRelationFilter, Prisma.ProductLineWhereInput>
   colors?: Prisma.ProductColorListRelationFilter
+  colorGroups?: Prisma.ProductColorGroupListRelationFilter
   presentations?: Prisma.ProductPresentationListRelationFilter
+  features?: Prisma.ProductFeatureListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
 }, "id" | "slug">
@@ -286,13 +350,17 @@ export type ProductOrderByWithAggregationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   recommendations?: Prisma.SortOrderInput | Prisma.SortOrder
   technicalSheetUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  coverageMinM2PerGallon?: Prisma.SortOrderInput | Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrderInput | Prisma.SortOrder
   productLineId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProductCountOrderByAggregateInput
+  _avg?: Prisma.ProductAvgOrderByAggregateInput
   _max?: Prisma.ProductMaxOrderByAggregateInput
   _min?: Prisma.ProductMinOrderByAggregateInput
+  _sum?: Prisma.ProductSumOrderByAggregateInput
 }
 
 export type ProductScalarWhereWithAggregatesInput = {
@@ -306,6 +374,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   image?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   recommendations?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   technicalSheetUrl?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  coverageMinM2PerGallon?: Prisma.FloatNullableWithAggregatesFilter<"Product"> | number | null
+  coverageMaxM2PerGallon?: Prisma.FloatNullableWithAggregatesFilter<"Product"> | number | null
   productLineId?: Prisma.StringWithAggregatesFilter<"Product"> | string
   isActive?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -320,12 +390,16 @@ export type ProductCreateInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
 }
@@ -338,12 +412,16 @@ export type ProductUncheckedCreateInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
 }
@@ -356,12 +434,16 @@ export type ProductUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
 }
@@ -374,12 +456,16 @@ export type ProductUncheckedUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
 }
@@ -392,6 +478,8 @@ export type ProductCreateManyInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
@@ -406,6 +494,8 @@ export type ProductUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -419,6 +509,8 @@ export type ProductUncheckedUpdateManyInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,10 +535,17 @@ export type ProductCountOrderByAggregateInput = {
   image?: Prisma.SortOrder
   recommendations?: Prisma.SortOrder
   technicalSheetUrl?: Prisma.SortOrder
+  coverageMinM2PerGallon?: Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrder
   productLineId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProductAvgOrderByAggregateInput = {
+  coverageMinM2PerGallon?: Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrder
 }
 
 export type ProductMaxOrderByAggregateInput = {
@@ -457,6 +556,8 @@ export type ProductMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   recommendations?: Prisma.SortOrder
   technicalSheetUrl?: Prisma.SortOrder
+  coverageMinM2PerGallon?: Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrder
   productLineId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -471,10 +572,17 @@ export type ProductMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   recommendations?: Prisma.SortOrder
   technicalSheetUrl?: Prisma.SortOrder
+  coverageMinM2PerGallon?: Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrder
   productLineId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProductSumOrderByAggregateInput = {
+  coverageMinM2PerGallon?: Prisma.SortOrder
+  coverageMaxM2PerGallon?: Prisma.SortOrder
 }
 
 export type ProductScalarRelationFilter = {
@@ -524,6 +632,14 @@ export type ProductUncheckedUpdateManyWithoutProductLineNestedInput = {
   deleteMany?: Prisma.ProductScalarWhereInput | Prisma.ProductScalarWhereInput[]
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type ProductCreateNestedOneWithoutImagesInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutImagesInput, Prisma.ProductUncheckedCreateWithoutImagesInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImagesInput
@@ -536,6 +652,20 @@ export type ProductUpdateOneRequiredWithoutImagesNestedInput = {
   upsert?: Prisma.ProductUpsertWithoutImagesInput
   connect?: Prisma.ProductWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutImagesInput, Prisma.ProductUpdateWithoutImagesInput>, Prisma.ProductUncheckedUpdateWithoutImagesInput>
+}
+
+export type ProductCreateNestedOneWithoutFeaturesInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutFeaturesInput, Prisma.ProductUncheckedCreateWithoutFeaturesInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutFeaturesInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneRequiredWithoutFeaturesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutFeaturesInput, Prisma.ProductUncheckedCreateWithoutFeaturesInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutFeaturesInput
+  upsert?: Prisma.ProductUpsertWithoutFeaturesInput
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutFeaturesInput, Prisma.ProductUpdateWithoutFeaturesInput>, Prisma.ProductUncheckedUpdateWithoutFeaturesInput>
 }
 
 export type ProductCreateNestedOneWithoutPresentationsInput = {
@@ -566,6 +696,20 @@ export type ProductUpdateOneRequiredWithoutColorsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutColorsInput, Prisma.ProductUpdateWithoutColorsInput>, Prisma.ProductUncheckedUpdateWithoutColorsInput>
 }
 
+export type ProductCreateNestedOneWithoutColorGroupsInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutColorGroupsInput, Prisma.ProductUncheckedCreateWithoutColorGroupsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutColorGroupsInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneRequiredWithoutColorGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutColorGroupsInput, Prisma.ProductUncheckedCreateWithoutColorGroupsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutColorGroupsInput
+  upsert?: Prisma.ProductUpsertWithoutColorGroupsInput
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutColorGroupsInput, Prisma.ProductUpdateWithoutColorGroupsInput>, Prisma.ProductUncheckedUpdateWithoutColorGroupsInput>
+}
+
 export type ProductCreateNestedOneWithoutOrderItemsInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutOrderItemsInput, Prisma.ProductUncheckedCreateWithoutOrderItemsInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutOrderItemsInput
@@ -588,11 +732,15 @@ export type ProductCreateWithoutProductLineInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
 }
@@ -605,11 +753,15 @@ export type ProductUncheckedCreateWithoutProductLineInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
 }
@@ -651,6 +803,8 @@ export type ProductScalarWhereInput = {
   image?: Prisma.StringNullableFilter<"Product"> | string | null
   recommendations?: Prisma.StringNullableFilter<"Product"> | string | null
   technicalSheetUrl?: Prisma.StringNullableFilter<"Product"> | string | null
+  coverageMinM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
+  coverageMaxM2PerGallon?: Prisma.FloatNullableFilter<"Product"> | number | null
   productLineId?: Prisma.StringFilter<"Product"> | string
   isActive?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -665,12 +819,16 @@ export type ProductCreateWithoutImagesInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
 }
 
@@ -682,12 +840,16 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
 }
 
@@ -715,12 +877,16 @@ export type ProductUpdateWithoutImagesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
 }
 
@@ -732,12 +898,116 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductCreateWithoutFeaturesInput = {
+  id?: string
+  slug: string
+  name: string
+  description: string
+  image?: string | null
+  recommendations?: string | null
+  technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
+  colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
+  presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutFeaturesInput = {
+  id?: string
+  slug: string
+  name: string
+  description: string
+  image?: string | null
+  recommendations?: string | null
+  technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
+  productLineId: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
+  presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutFeaturesInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutFeaturesInput, Prisma.ProductUncheckedCreateWithoutFeaturesInput>
+}
+
+export type ProductUpsertWithoutFeaturesInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutFeaturesInput, Prisma.ProductUncheckedUpdateWithoutFeaturesInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutFeaturesInput, Prisma.ProductUncheckedCreateWithoutFeaturesInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutFeaturesInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutFeaturesInput, Prisma.ProductUncheckedUpdateWithoutFeaturesInput>
+}
+
+export type ProductUpdateWithoutFeaturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
+  colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
+  presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutFeaturesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productLineId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
+  presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
 }
 
@@ -749,11 +1019,15 @@ export type ProductCreateWithoutPresentationsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
 }
@@ -766,11 +1040,15 @@ export type ProductUncheckedCreateWithoutPresentationsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
 }
@@ -799,11 +1077,15 @@ export type ProductUpdateWithoutPresentationsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
 }
@@ -816,11 +1098,15 @@ export type ProductUncheckedUpdateWithoutPresentationsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
 }
@@ -833,11 +1119,15 @@ export type ProductCreateWithoutColorsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
 }
@@ -850,11 +1140,15 @@ export type ProductUncheckedCreateWithoutColorsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
 }
@@ -883,11 +1177,15 @@ export type ProductUpdateWithoutColorsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
 }
@@ -900,11 +1198,115 @@ export type ProductUncheckedUpdateWithoutColorsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+}
+
+export type ProductCreateWithoutColorGroupsInput = {
+  id?: string
+  slug: string
+  name: string
+  description: string
+  image?: string | null
+  recommendations?: string | null
+  technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
+  colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutColorGroupsInput = {
+  id?: string
+  slug: string
+  name: string
+  description: string
+  image?: string | null
+  recommendations?: string | null
+  technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
+  productLineId: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
+  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutColorGroupsInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutColorGroupsInput, Prisma.ProductUncheckedCreateWithoutColorGroupsInput>
+}
+
+export type ProductUpsertWithoutColorGroupsInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutColorGroupsInput, Prisma.ProductUncheckedUpdateWithoutColorGroupsInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutColorGroupsInput, Prisma.ProductUncheckedCreateWithoutColorGroupsInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutColorGroupsInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutColorGroupsInput, Prisma.ProductUncheckedUpdateWithoutColorGroupsInput>
+}
+
+export type ProductUpdateWithoutColorGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
+  colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
+  images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutColorGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productLineId?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
 }
@@ -917,12 +1319,16 @@ export type ProductCreateWithoutOrderItemsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   productLine: Prisma.ProductLineCreateNestedOneWithoutProductsInput
   colors?: Prisma.ProductColorCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
 }
 
@@ -934,12 +1340,16 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   productLineId: string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   colors?: Prisma.ProductColorUncheckedCreateNestedManyWithoutProductInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedCreateNestedManyWithoutProductInput
   presentations?: Prisma.ProductPresentationUncheckedCreateNestedManyWithoutProductInput
+  features?: Prisma.ProductFeatureUncheckedCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
 }
 
@@ -967,12 +1377,16 @@ export type ProductUpdateWithoutOrderItemsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   productLine?: Prisma.ProductLineUpdateOneRequiredWithoutProductsNestedInput
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
 }
 
@@ -984,12 +1398,16 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   productLineId?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
 }
 
@@ -1001,6 +1419,8 @@ export type ProductCreateManyProductLineInput = {
   image?: string | null
   recommendations?: string | null
   technicalSheetUrl?: string | null
+  coverageMinM2PerGallon?: number | null
+  coverageMaxM2PerGallon?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1014,11 +1434,15 @@ export type ProductUpdateWithoutProductLineInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
 }
@@ -1031,11 +1455,15 @@ export type ProductUncheckedUpdateWithoutProductLineInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   colors?: Prisma.ProductColorUncheckedUpdateManyWithoutProductNestedInput
+  colorGroups?: Prisma.ProductColorGroupUncheckedUpdateManyWithoutProductNestedInput
   presentations?: Prisma.ProductPresentationUncheckedUpdateManyWithoutProductNestedInput
+  features?: Prisma.ProductFeatureUncheckedUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
 }
@@ -1048,6 +1476,8 @@ export type ProductUncheckedUpdateManyWithoutProductLineInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recommendations?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   technicalSheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageMinM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  coverageMaxM2PerGallon?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1060,14 +1490,18 @@ export type ProductUncheckedUpdateManyWithoutProductLineInput = {
 
 export type ProductCountOutputType = {
   colors: number
+  colorGroups: number
   presentations: number
+  features: number
   images: number
   orderItems: number
 }
 
 export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   colors?: boolean | ProductCountOutputTypeCountColorsArgs
+  colorGroups?: boolean | ProductCountOutputTypeCountColorGroupsArgs
   presentations?: boolean | ProductCountOutputTypeCountPresentationsArgs
+  features?: boolean | ProductCountOutputTypeCountFeaturesArgs
   images?: boolean | ProductCountOutputTypeCountImagesArgs
   orderItems?: boolean | ProductCountOutputTypeCountOrderItemsArgs
 }
@@ -1092,8 +1526,22 @@ export type ProductCountOutputTypeCountColorsArgs<ExtArgs extends runtime.Types.
 /**
  * ProductCountOutputType without action
  */
+export type ProductCountOutputTypeCountColorGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductColorGroupWhereInput
+}
+
+/**
+ * ProductCountOutputType without action
+ */
 export type ProductCountOutputTypeCountPresentationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProductPresentationWhereInput
+}
+
+/**
+ * ProductCountOutputType without action
+ */
+export type ProductCountOutputTypeCountFeaturesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductFeatureWhereInput
 }
 
 /**
@@ -1119,13 +1567,17 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   image?: boolean
   recommendations?: boolean
   technicalSheetUrl?: boolean
+  coverageMinM2PerGallon?: boolean
+  coverageMaxM2PerGallon?: boolean
   productLineId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   productLine?: boolean | Prisma.ProductLineDefaultArgs<ExtArgs>
   colors?: boolean | Prisma.Product$colorsArgs<ExtArgs>
+  colorGroups?: boolean | Prisma.Product$colorGroupsArgs<ExtArgs>
   presentations?: boolean | Prisma.Product$presentationsArgs<ExtArgs>
+  features?: boolean | Prisma.Product$featuresArgs<ExtArgs>
   images?: boolean | Prisma.Product$imagesArgs<ExtArgs>
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1139,6 +1591,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   image?: boolean
   recommendations?: boolean
   technicalSheetUrl?: boolean
+  coverageMinM2PerGallon?: boolean
+  coverageMaxM2PerGallon?: boolean
   productLineId?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -1154,6 +1608,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   image?: boolean
   recommendations?: boolean
   technicalSheetUrl?: boolean
+  coverageMinM2PerGallon?: boolean
+  coverageMaxM2PerGallon?: boolean
   productLineId?: boolean
   isActive?: boolean
   createdAt?: boolean
@@ -1169,17 +1625,21 @@ export type ProductSelectScalar = {
   image?: boolean
   recommendations?: boolean
   technicalSheetUrl?: boolean
+  coverageMinM2PerGallon?: boolean
+  coverageMaxM2PerGallon?: boolean
   productLineId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "description" | "image" | "recommendations" | "technicalSheetUrl" | "productLineId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "description" | "image" | "recommendations" | "technicalSheetUrl" | "coverageMinM2PerGallon" | "coverageMaxM2PerGallon" | "productLineId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productLine?: boolean | Prisma.ProductLineDefaultArgs<ExtArgs>
   colors?: boolean | Prisma.Product$colorsArgs<ExtArgs>
+  colorGroups?: boolean | Prisma.Product$colorGroupsArgs<ExtArgs>
   presentations?: boolean | Prisma.Product$presentationsArgs<ExtArgs>
+  features?: boolean | Prisma.Product$featuresArgs<ExtArgs>
   images?: boolean | Prisma.Product$imagesArgs<ExtArgs>
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1196,7 +1656,9 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     productLine: Prisma.$ProductLinePayload<ExtArgs>
     colors: Prisma.$ProductColorPayload<ExtArgs>[]
+    colorGroups: Prisma.$ProductColorGroupPayload<ExtArgs>[]
     presentations: Prisma.$ProductPresentationPayload<ExtArgs>[]
+    features: Prisma.$ProductFeaturePayload<ExtArgs>[]
     images: Prisma.$ProductImagePayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
   }
@@ -1208,6 +1670,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     image: string | null
     recommendations: string | null
     technicalSheetUrl: string | null
+    coverageMinM2PerGallon: number | null
+    coverageMaxM2PerGallon: number | null
     productLineId: string
     isActive: boolean
     createdAt: Date
@@ -1608,7 +2072,9 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   productLine<T extends Prisma.ProductLineDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductLineDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductLineClient<runtime.Types.Result.GetResult<Prisma.$ProductLinePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   colors<T extends Prisma.Product$colorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$colorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductColorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  colorGroups<T extends Prisma.Product$colorGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$colorGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductColorGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   presentations<T extends Prisma.Product$presentationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$presentationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPresentationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  features<T extends Prisma.Product$featuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$featuresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductFeaturePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   images<T extends Prisma.Product$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.Product$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1647,6 +2113,8 @@ export interface ProductFieldRefs {
   readonly image: Prisma.FieldRef<"Product", 'String'>
   readonly recommendations: Prisma.FieldRef<"Product", 'String'>
   readonly technicalSheetUrl: Prisma.FieldRef<"Product", 'String'>
+  readonly coverageMinM2PerGallon: Prisma.FieldRef<"Product", 'Float'>
+  readonly coverageMaxM2PerGallon: Prisma.FieldRef<"Product", 'Float'>
   readonly productLineId: Prisma.FieldRef<"Product", 'String'>
   readonly isActive: Prisma.FieldRef<"Product", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
@@ -2076,6 +2544,30 @@ export type Product$colorsArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Product.colorGroups
+ */
+export type Product$colorGroupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductColorGroup
+   */
+  select?: Prisma.ProductColorGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductColorGroup
+   */
+  omit?: Prisma.ProductColorGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductColorGroupInclude<ExtArgs> | null
+  where?: Prisma.ProductColorGroupWhereInput
+  orderBy?: Prisma.ProductColorGroupOrderByWithRelationInput | Prisma.ProductColorGroupOrderByWithRelationInput[]
+  cursor?: Prisma.ProductColorGroupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductColorGroupScalarFieldEnum | Prisma.ProductColorGroupScalarFieldEnum[]
+}
+
+/**
  * Product.presentations
  */
 export type Product$presentationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2097,6 +2589,30 @@ export type Product$presentationsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ProductPresentationScalarFieldEnum | Prisma.ProductPresentationScalarFieldEnum[]
+}
+
+/**
+ * Product.features
+ */
+export type Product$featuresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductFeature
+   */
+  select?: Prisma.ProductFeatureSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductFeature
+   */
+  omit?: Prisma.ProductFeatureOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductFeatureInclude<ExtArgs> | null
+  where?: Prisma.ProductFeatureWhereInput
+  orderBy?: Prisma.ProductFeatureOrderByWithRelationInput | Prisma.ProductFeatureOrderByWithRelationInput[]
+  cursor?: Prisma.ProductFeatureWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductFeatureScalarFieldEnum | Prisma.ProductFeatureScalarFieldEnum[]
 }
 
 /**

@@ -17,6 +17,12 @@ export async function updateProduct(
         ...(data.recommendations !== undefined && {
           recommendations: data.recommendations || null,
         }),
+        ...(data.coverageMinM2PerGallon !== undefined && {
+          coverageMinM2PerGallon: data.coverageMinM2PerGallon,
+        }),
+        ...(data.coverageMaxM2PerGallon !== undefined && {
+          coverageMaxM2PerGallon: data.coverageMaxM2PerGallon,
+        }),
         ...(data.productLineId !== undefined && {
           productLineId: data.productLineId,
         }),
@@ -26,7 +32,6 @@ export async function updateProduct(
       },
     });
 
-    // actualizar imágenes existentes, NO borrarlas
     if (data.existingImages !== undefined) {
       await Promise.all(
         data.existingImages.map((image) =>
@@ -46,10 +51,8 @@ export async function updateProduct(
       );
     }
 
-    // crear solo imágenes nuevas
-    if (data.images !== undefined && data.images.length > 0) {
-      const existingImagesCount =
-        data.existingImages?.length ?? 0;
+    if (data.images?.length) {
+      const existingImagesCount = data.existingImages?.length ?? 0;
 
       await tx.productImage.createMany({
         data: data.images.map((image, index) => ({
@@ -57,17 +60,14 @@ export async function updateProduct(
           url: image.url,
           publicId: image.publicId ?? null,
           alt: image.alt ?? null,
-          position:
-            image.position ?? existingImagesCount + index,
+          position: image.position ?? existingImagesCount + index,
           isMain:
-            image.isMain ??
-            (existingImagesCount === 0 && index === 0),
+            image.isMain ?? (existingImagesCount === 0 && index === 0),
           active: true,
         })),
       });
     }
 
-    // asegurar una sola imagen principal
     const activeImages = await tx.productImage.findMany({
       where: {
         productId: id,
@@ -78,18 +78,12 @@ export async function updateProduct(
       },
     });
 
-    const mainImages = activeImages.filter(
-      (image) => image.isMain
-    );
+    const mainImages = activeImages.filter((image) => image.isMain);
 
     if (mainImages.length === 0 && activeImages.length > 0) {
       await tx.productImage.update({
-        where: {
-          id: activeImages[0].id,
-        },
-        data: {
-          isMain: true,
-        },
+        where: { id: activeImages[0].id },
+        data: { isMain: true },
       });
     }
 
@@ -108,18 +102,61 @@ export async function updateProduct(
       });
     }
 
-    if (data.colors !== undefined) {
+    if (data.features !== undefined) {
+      await tx.productFeature.deleteMany({
+        where: { productId: id },
+      });
+
+      if (data.features.length > 0) {
+        await tx.productFeature.createMany({
+          data: data.features.map((feature) => ({
+            productId: id,
+            name: feature.name,
+            description: feature.description ?? null,
+          })),
+        });
+      }
+    }
+
+    if (data.colors !== undefined || data.colorGroups !== undefined) {
       await tx.productColor.deleteMany({
         where: { productId: id },
       });
 
-      if (data.colors.length > 0) {
-        await tx.productColor.createMany({
-          data: data.colors.map((color) => ({
+      await tx.productColorGroup.deleteMany({
+        where: { productId: id },
+      });
+    }
+
+    if (data.colors !== undefined && data.colors.length > 0) {
+      await tx.productColor.createMany({
+        data: data.colors.map((color) => ({
+          productId: id,
+          name: color.name ?? null,
+          value: color.value,
+          active: true,
+        })),
+      });
+    }
+
+    if (data.colorGroups !== undefined && data.colorGroups.length > 0) {
+      for (const [groupIndex, group] of data.colorGroups.entries()) {
+        await tx.productColorGroup.create({
+          data: {
             productId: id,
-            name: color.name ?? null,
-            value: color.value,
-          })),
+            name: group.name,
+            description: group.description ?? null,
+            position: groupIndex,
+            active: true,
+            colors: {
+              create: group.colors.map((color) => ({
+                productId: id,
+                name: color.name ?? null,
+                value: color.value,
+                active: true,
+              })),
+            },
+          },
         });
       }
     }
@@ -135,31 +172,35 @@ export async function updateProduct(
             productId: id,
             name: presentation.name,
             price: presentation.price,
-            stock: presentation.stock,
+            stock: presentation.stock ?? 0,
             sku: presentation.sku ?? null,
           })),
         });
       }
     }
 
-    return tx.product.findUnique({
+    return tx.product.findUniqueOrThrow({
       where: { id },
       include: {
         productLine: true,
         images: {
-          where: {
-            active: true,
-          },
-          orderBy: {
-            position: "asc",
-          },
+          where: { active: true },
+          orderBy: { position: "asc" },
         },
         colors: {
-          where: {
-            active: true,
+          where: { active: true },
+        },
+        colorGroups: {
+          where: { active: true },
+          orderBy: { position: "asc" },
+          include: {
+            colors: {
+              where: { active: true },
+            },
           },
         },
         presentations: true,
+        features: true,
       },
     });
   });

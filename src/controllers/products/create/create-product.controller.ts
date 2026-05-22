@@ -2,6 +2,8 @@ import { CreateProductInput } from "../../../schemas/products/products.schema";
 import { type Request, type Response } from "express";
 import { uploadBufferToCloudinary, uploadPdfBufferToCloudinary } from "../../../utils/cloudinary/upload";
 import { createProduct } from "../../../services/products/create-product.service";
+import multer from "multer";
+
 type ProductFiles = {
   images?: Express.Multer.File[];
   technicalSheet?: Express.Multer.File[];

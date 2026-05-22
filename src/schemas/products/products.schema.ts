@@ -10,6 +10,29 @@ const parseJsonArray = (value: unknown) => {
   }
 };
 
+const featureSchema = z.object({
+  name: z.string().min(
+    1,
+    "El nombre de la característica es obligatorio"
+  ),
+
+  description: z
+    .string()
+    .optional()
+    .nullable(),
+});
+
+const colorSchema = z.object({
+  name: z.string().optional().nullable(),
+  value: z.string().min(1, "El color es obligatorio"),
+});
+
+const colorGroupSchema = z.object({
+  name: z.string().min(1, "El nombre del grupo es obligatorio"),
+  description: z.string().optional().nullable(),
+  colors: z.array(colorSchema).min(1, "El grupo debe tener al menos un color"),
+});
+
 const existingImageSchema = z.object({
   id: z.string().uuid("La imagen no es válida"),
   alt: z.string().optional().nullable(),
@@ -17,10 +40,6 @@ const existingImageSchema = z.object({
   isMain: z.coerce.boolean().optional(),
 });
 
-const colorSchema = z.object({
-  name: z.string().optional().nullable(),
-  value: z.string().min(1, "El color es obligatorio"),
-});
 
 const presentationSchema = z.object({
   name: z.string().min(1, "La presentación es obligatoria"),
@@ -59,13 +78,32 @@ const baseProductSchema = z.object({
 
   recommendations: z.string().optional().nullable(),
 
+  coverageMinM2PerGallon: z.coerce
+    .number()
+    .positive("La cobertura mínima debe ser mayor a 0")
+    .optional()
+    .nullable(),
+
+  coverageMaxM2PerGallon: z.coerce
+    .number()
+    .positive("La cobertura máxima debe ser mayor a 0")
+    .optional()
+    .nullable(),
+
   productLineId: z.string().uuid("La línea del producto no es válida"),
+  features: z.preprocess(
+    parseJsonArray,
+    z.array(featureSchema).optional()
+  ),
 
   colors: z.preprocess(
     parseJsonArray,
     z.array(colorSchema).optional()
   ),
-
+  colorGroups: z.preprocess(
+    parseJsonArray,
+    z.array(colorGroupSchema).optional()
+  ),
   presentations: z.preprocess(
     parseJsonArray,
     z.array(presentationSchema).min(
@@ -79,12 +117,42 @@ const baseProductSchema = z.object({
   ),
 });
 
+const hasNoRepeatedFeatures = (data: {
+  features?: { name: string }[];
+}) => {
+  if (!data.features) return true;
+
+  const names = data.features.map((feature) =>
+    feature.name.trim().toLowerCase()
+  );
+
+  return new Set(names).size === names.length;
+};
+
+const hasNoRepeatedColorGroups = (data: {
+  colorGroups?: { name: string }[];
+}) => {
+  if (!data.colorGroups) return true;
+
+  const names = data.colorGroups.map((group) =>
+    group.name.trim().toLowerCase()
+  );
+
+  return new Set(names).size === names.length;
+};
+
 const hasNoRepeatedColors = (data: {
   colors?: { value: string }[];
+  colorGroups?: {
+    colors: { value: string }[];
+  }[];
 }) => {
-  if (!data.colors) return true;
+  const simpleColors = data.colors ?? [];
 
-  const values = data.colors.map((color) =>
+  const groupedColors =
+    data.colorGroups?.flatMap((group) => group.colors) ?? [];
+
+  const values = [...simpleColors, ...groupedColors].map((color) =>
     color.value.trim().toLowerCase()
   );
 
@@ -108,10 +176,18 @@ export const createProductSchema = baseProductSchema
     message: "No puedes repetir colores",
     path: ["colors"],
   })
+  .refine(hasNoRepeatedColorGroups, {
+    message: "No puedes repetir grupos de colores",
+    path: ["colorGroups"],
+  })
   .refine(hasNoRepeatedPresentations, {
     message: "No puedes repetir presentaciones",
     path: ["presentations"],
-  });
+  })
+  .refine(hasNoRepeatedFeatures, {
+    message: "No puedes repetir características",
+    path: ["features"],
+  })
 
 export const updateProductSchema = baseProductSchema
   .partial()
@@ -119,11 +195,18 @@ export const updateProductSchema = baseProductSchema
     message: "No puedes repetir colores",
     path: ["colors"],
   })
+  .refine(hasNoRepeatedColorGroups, {
+    message: "No puedes repetir grupos de colores",
+    path: ["colorGroups"],
+  })
   .refine(hasNoRepeatedPresentations, {
     message: "No puedes repetir presentaciones",
     path: ["presentations"],
-  });
-
+  })
+  .refine(hasNoRepeatedFeatures, {
+    message: "No puedes repetir características",
+    path: ["features"],
+  })
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;

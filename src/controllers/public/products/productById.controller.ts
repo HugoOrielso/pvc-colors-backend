@@ -22,6 +22,7 @@ export const getPublicProductById = async (
       data: line,
     });
   } catch (error) {
+    console.error("Error al obtener el producto por ID:", error);
     return res.status(500).json({
       ok: false,
       message: "Error interno al obtener la línea",

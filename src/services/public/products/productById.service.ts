@@ -3,25 +3,46 @@ import { prisma } from "../../../database/db";
 
 export const getPublicProductByIdService = async (id: string) => {
     const product = await prisma.product.findFirst({
-        where: {
-            id,
-            isActive: true,
-        },
+        where: { id },
         include: {
             productLine: true,
-            colors: {
-                where: { active: true },
-                orderBy: { name: "asc" },
-            },
-            presentations: {
-                where: { active: true },
-                orderBy: { price: "asc" },
-            },
+
             images: {
                 where: { active: true },
-                orderBy: [{ isMain: "desc" }, { position: "asc" }],
+                orderBy: { position: "asc" },
+            },
+
+            colors: {
+                where: {
+                    active: true,
+                    groupId: null,
+                },
+                orderBy: {
+                    value: "asc",
+                },
+            },
+            features: true,
+            
+
+            colorGroups: {
+                where: { active: true },
+                orderBy: { position: "asc" },
+                include: {
+                    colors: {
+                        where: { active: true },
+                        orderBy: {
+                            value: "asc",
+                        },
+                    },
+                },
+            },
+
+            presentations: {
+                where: { active: true },
+                orderBy: { createdAt: "asc" },
             },
         },
+
     });
 
     return product;

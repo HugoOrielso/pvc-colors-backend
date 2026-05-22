@@ -12,6 +12,10 @@ import cookieParser from "cookie-parser";
 import linesRouter from "./router/private/lines.routes";
 import publicLinesRouter from "./router/public/public-lines.routes";
 import publicProductRouter from "./router/public/public-product.routes";
+import articlesRouter from "./router/private/articles.routes";
+import distributorsRouter from "./router/private/distributors.routes";
+import publicDistributorsRouter from "./router/public/distributor.routes";
+import publicArticlesRouter from "./router/public/articles.routes";
 
 const app = express();
 
@@ -67,6 +71,10 @@ app.use("/api/products", productsRouter);
 app.use("/api/lines", linesRouter);
 app.use("/api/public/lines", publicLinesRouter);
 app.use("/api/public/products", publicProductRouter);
+app.use("/api/public/distributors", publicDistributorsRouter);
+app.use("/api/public/articles", publicArticlesRouter);
+app.use("/api/articles", articlesRouter);
+app.use("/api/distributors", distributorsRouter);
 // app.use("/api/uploads", uploadRoutes);
 // app.use("/api/payments", paymentsRouter);
 // app.use("/api/invoices", invoicesRouter);
