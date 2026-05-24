@@ -1,77 +1,92 @@
-// import { z } from "zod";
-// import { DocumentType } from "../../generated/prisma/enums";
+import { z } from "zod";
 
-// const documentTypeValues = Object.values(DocumentType) as [string, ...string[]];
-// export const checkoutCustomerSchema = z.object({
-//   fullName: z
-//     .string()
-//     .trim()
-//     .min(2, { error: "El nombre completo es obligatorio" }),
+export const checkoutCustomerSchema = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(2, { error: "El nombre completo es obligatorio" }),
 
-//   documentType: z.enum(documentTypeValues, {
-//     error: "Tipo de documento inválido",
-//   }),
+  documentType: z
+    .string()
+    .trim()
+    .min(1, { error: "El tipo de documento es obligatorio" }),
 
-//   documentNumber: z
-//     .string()
-//     .trim()
-//     .min(5, { error: "El número de documento es obligatorio" }),
+  documentNumber: z
+    .string()
+    .trim()
+    .min(5, { error: "El número de documento es obligatorio" }),
 
-//   address: z
-//     .string()
-//     .trim()
-//     .min(5, { error: "La dirección es obligatoria" }),
+  address: z
+    .string()
+    .trim()
+    .min(5, { error: "La dirección es obligatoria" }),
 
-//   email: z
-//     .string()
-//     .trim()
-//     .email({ error: "Correo electrónico inválido" }),
+  email: z
+    .string()
+    .trim()
+    .email({ error: "Correo electrónico inválido" }),
 
-//   phone: z
-//     .string()
-//     .trim()
-//     .min(7, { error: "Teléfono inválido" }),
+  phone: z
+    .string()
+    .trim()
+    .min(7, { error: "Teléfono inválido" }),
 
-//   city: z
-//     .string()
-//     .trim()
-//     .min(2, { error: "La ciudad es obligatoria" }),
+  city: z
+    .string()
+    .trim()
+    .min(2, { error: "La ciudad es obligatoria" }),
 
-//   department: z
-//     .string()
-//     .trim()
-//     .min(2, { error: "El departamento es obligatorio" }),
+  department: z
+    .string()
+    .trim()
+    .min(2, { error: "El departamento es obligatorio" }),
 
-//   country: z
-//     .string()
-//     .trim()
-//     .min(2, { error: "El país es obligatorio" }),
-// });
+  country: z
+    .string()
+    .trim()
+    .min(2, { error: "El país es obligatorio" }),
+});
 
-// export const checkoutItemSchema = z.object({
-//   productId: z
-//     .string()
-//     .trim()
-//     .min(1, { error: "El productId es obligatorio" }),
+export const checkoutItemSchema = z.object({
+  productId: z
+    .string()
+    .trim()
+    .min(1, { error: "El productId es obligatorio" }),
 
-//   quantity: z
-//     .number({
-//       error: (issue) =>
-//         issue.input === undefined
-//           ? "La cantidad es obligatoria"
-//           : "La cantidad debe ser numérica",
-//     })
-//     .int({ error: "La cantidad debe ser un número entero" })
-//     .positive({ error: "La cantidad debe ser mayor a 0" }),
-// });
+  presentationId: z
+    .string()
+    .trim()
+    .min(1, { error: "El presentationId es obligatorio" }),
 
-// export const createWompiCheckoutSchema = z.object({
-//   customer: checkoutCustomerSchema,
-//   items: z
-//     .array(checkoutItemSchema, { error: "Los items son obligatorios" })
-//     .min(1, { error: "Debes enviar al menos un producto" }),
-// });
+  color: z.string().trim().optional().nullable(),
 
-// export type CreateWompiCheckoutInput = z.infer<
-//   typeof createWompiCheckoutSchema
-// >;
+  colorName: z.string().trim().optional().nullable(),
+
+  colorValue: z.string().trim().optional().nullable(),
+
+  quantity: z
+    .number({
+      error: (issue) =>
+        issue.input === undefined
+          ? "La cantidad es obligatoria"
+          : "La cantidad debe ser numérica",
+    })
+    .int({ error: "La cantidad debe ser un número entero" })
+    .positive({ error: "La cantidad debe ser mayor a 0" }),
+});
+
+export const createWompiCheckoutSchema = z.object({
+  customer: checkoutCustomerSchema,
+
+  items: z
+    .array(checkoutItemSchema, {
+      error: "Los items son obligatorios",
+    })
+    .min(1, {
+      error: "Debes enviar al menos un producto",
+    }),
+});
+
+export type CreateWompiCheckoutInput = z.infer<
+  typeof createWompiCheckoutSchema
+>;

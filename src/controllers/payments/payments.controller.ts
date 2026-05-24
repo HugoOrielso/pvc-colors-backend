@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { prisma } from "../../database/db";
 import { CreateWompiCheckoutInput } from "../../schemas/checkout/checkout.schema";
 import { Prisma } from "../../generated/prisma/client";
-import { DocumentType, OrderStatus } from "../../generated/prisma/enums";
+import { OrderStatus } from "../../generated/prisma/enums";
 
 const wompiLegalIdTypeMap: Record<string, string> = {
   REGISTRO_CIVIL: "RC",
@@ -32,6 +32,7 @@ export async function createWompiCheckout(
     }
 
     const productIds = [...new Set(items.map((item) => item.productId))];
+    const presentationIds = [...new Set(items.map((item) => item.presentationId))];
 
     const products = await prisma.product.findMany({
       where: {
@@ -46,33 +47,67 @@ export async function createWompiCheckout(
       });
     }
 
+    const presentations = await prisma.productPresentation.findMany({
+      where: {
+        id: { in: presentationIds },
+        active: true,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    if (presentations.length !== presentationIds.length) {
+      return res.status(400).json({
+        message: "Una o más presentaciones no existen o no están activas",
+      });
+    }
+
     const productMap = new Map(products.map((product) => [product.id, product]));
+
+    const presentationMap = new Map(
+      presentations.map((presentation) => [presentation.id, presentation])
+    );
 
     const normalizedItems = items.map((item) => {
       const product = productMap.get(item.productId);
+      const presentation = presentationMap.get(item.presentationId);
 
       if (!product) {
         throw new Error(`Producto no encontrado: ${item.productId}`);
       }
 
-      if (product.stock < item.quantity) {
+      if (!presentation) {
+        throw new Error(`Presentación no encontrada: ${item.presentationId}`);
+      }
+
+      if (presentation.productId !== product.id) {
+        throw new Error(
+          `La presentación ${presentation.name} no pertenece al producto ${product.name}`
+        );
+      }
+
+      if (presentation.stock < item.quantity) {
         return {
-          error: `Stock insuficiente para ${product.name}`,
+          error: `Stock insuficiente para ${product.name} - ${presentation.name}`,
         };
       }
 
-      const unitPrice = Number(product.price);
-      const lineTotal = unitPrice * item.quantity;
+      const unitPrice = Number(presentation.price);
+      const total = unitPrice * item.quantity;
 
       return {
         product,
+        presentation,
+        color: item.color ?? null,
         quantity: item.quantity,
         unitPrice,
-        lineTotal,
+        total,
       };
     });
 
     const stockError = normalizedItems.find((item) => "error" in item);
+
     if (stockError && "error" in stockError) {
       return res.status(400).json({
         message: stockError.error,
@@ -80,11 +115,13 @@ export async function createWompiCheckout(
     }
 
     const safeItems = normalizedItems.filter(
-      (item): item is Exclude<(typeof normalizedItems)[number], { error: string }> =>
+      (
+        item
+      ): item is Exclude<(typeof normalizedItems)[number], { error: string }> =>
         !("error" in item)
     );
 
-    const subtotal = safeItems.reduce((acc, item) => acc + item.lineTotal, 0);
+    const subtotal = safeItems.reduce((acc, item) => acc + item.total, 0);
     const total = subtotal;
 
     if (total <= 0) {
@@ -109,113 +146,136 @@ export async function createWompiCheckout(
     }
 
     const amountInCents = Math.round(total * 100);
-    const reference = `ORDER-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
+    const reference = `ORDER-${Date.now()}-${crypto
+      .randomBytes(4)
+      .toString("hex")}`;
 
     const order = await prisma.order.create({
       data: {
-        reference,
-        customerName: customer.fullName,
-        customerEmail: customer.email,
-        customerPhone: customer.phone,
-        customerAddress: customer.address,
-        customerCountry: customer.country,
-        customerDepartment: customer.department,
-        customerCity: customer.city,
-        documentType: customer.documentType as DocumentType,
-        documentNumber: customer.documentNumber,
-        subtotal,
-        total,
-        status: OrderStatus.PENDING,
+        orderNumber: reference,
+        status: OrderStatus.PENDING_PAYMENT,
+
+        subtotal: new Prisma.Decimal(subtotal),
+        tax: new Prisma.Decimal(0),
+        shipping: new Prisma.Decimal(0),
+        total: new Prisma.Decimal(total),
+        currency: "COP",
+
+        customer: {
+          create: {
+            name: customer.fullName,
+            email: customer.email,
+            phone: customer.phone,
+            document: customer.documentNumber,
+            address: customer.address,
+          },
+        },
+
         items: {
           create: safeItems.map((item) => ({
             productId: item.product.id,
+            presentationId: item.presentation.id,
+
             productName: item.product.name,
+            presentationName: item.presentation.name,
+            color: item.color,
+
             quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            lineTotal: item.lineTotal,
-            packageLabel: item.product.packageLabel,
-            unitsPerPackage: item.product.unitsPerPackage,
-            unitWeightGrams:
-              item.product.unitWeightGrams != null
-                ? new Prisma.Decimal(item.product.unitWeightGrams)
-                : null,
+            unitPrice: new Prisma.Decimal(item.unitPrice),
+            total: new Prisma.Decimal(item.total),
           })),
         },
       },
       include: {
         items: true,
+        customer: true,
       },
     });
 
-    const wompiResponse = await fetch("https://production.wompi.co/v1/payment_links", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${privateKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: `Pedido ${reference}`,
-        description: safeItems.map((i) => `${i.product.name} x${i.quantity}`).join(", "),
-        single_use: true,
-        collect_shipping: false,
-        currency: "COP",
-        amount_in_cents: amountInCents,
-        redirect_url: `${frontendUrl}/payments/${reference}`,
-        reference,
-        image_url: null,
-        customer_data: {
-          email: customer.email,
-          full_name: customer.fullName,
-          phone_number: customer.phone,
-          legal_id: customer.documentNumber,
-          legal_id_type: wompiLegalIdTypeMap[customer.documentType] ?? "CC",
-        },
-      }),
-    });
+    const wompiBaseUrl = privateKey.startsWith("prv_test_")
+      ? "https://sandbox.wompi.co/v1"
+      : "https://production.wompi.co/v1";
 
-    const wompiData = await wompiResponse.json();
+    const wompiResponse = await fetch(`${wompiBaseUrl}/payment_links`, 
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${privateKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: `Pedido ${reference}`,
+            description: safeItems
+              .map(
+                (item) =>
+                  `${item.product.name} - ${item.presentation.name} x${item.quantity}`
+              )
+              .join(", "),
+            single_use: true,
+            collect_shipping: false,
+            currency: "COP",
+            amount_in_cents: amountInCents,
+            redirect_url: `${frontendUrl}/payments/${reference}`,
+            reference,
+            image_url: null,
+            customer_data: {
+              email: customer.email,
+              full_name: customer.fullName,
+              phone_number: customer.phone,
+              legal_id: customer.documentNumber,
+              legal_id_type: wompiLegalIdTypeMap[customer.documentType] ?? "CC",
+            },
+          }),
+        }
+      );
 
-    if (!wompiResponse.ok) {
-      console.error("❌ Wompi error:", JSON.stringify(wompiData, null, 2));
+      const wompiData = await wompiResponse.json();
 
-      await prisma.order.update({
-        where: { id: order.id },
-        data: {
-          status: OrderStatus.ERROR,
-          wompiPayload: wompiData as Prisma.InputJsonValue,
-        },
-      });
+console.log("Wompi response:", JSON.stringify(wompiData, null, 2));
 
-      return res.status(500).json({
-        message: "Error creando link de pago en Wompi",
-      });
-    }
-
-    const paymentLinkId = wompiData?.data?.id;
+      if(!wompiResponse.ok) {
+        console.error("❌ Wompi error:", JSON.stringify(wompiData, null, 2));
 
     await prisma.order.update({
       where: { id: order.id },
       data: {
-        wompiPaymentLinkId: paymentLinkId,
+        status: OrderStatus.CANCELLED,
+        paymentProvider: "WOMPI",
+        paymentReference: reference,
       },
     });
-
-    return res.status(200).json({
-      ok: true,
-      data: {
-        orderId: order.id,
-        reference,
-        paymentUrl: `https://checkout.wompi.co/l/${paymentLinkId}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error creando checkout de Wompi:", error);
 
     return res.status(500).json({
-      message:
-        error instanceof Error
-          ? error.message
-          : "Error interno al iniciar el checkout",
+      message: "Error creando link de pago en Wompi",
     });
   }
+
+    const paymentLinkId = wompiData?.data?.id;
+
+  await prisma.order.update({
+    where: { id: order.id },
+    data: {
+      paymentProvider: "WOMPI",
+      paymentReference: paymentLinkId ?? reference,
+    },
+  });
+
+  return res.status(200).json({
+    ok: true,
+    data: {
+      orderId: order.id,
+      reference,
+      paymentUrl: `https://checkout.wompi.co/l/${paymentLinkId}`,
+    },
+  });
+} catch (error) {
+  console.error("Error creando checkout de Wompi:", error);
+
+  return res.status(500).json({
+    message:
+      error instanceof Error
+        ? error.message
+        : "Error interno al iniciar el checkout",
+  });
+}
 }

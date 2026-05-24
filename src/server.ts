@@ -4,9 +4,6 @@ import cors from "cors";
 import productsRouter from "./router/private/products.routes";
 import path from "node:path";
 import fs from "node:fs";
-import uploadRoutes from "./router/private/uploads.routes";
-import paymentsRouter from "./router/private/payments.routes";
-import invoicesRouter from "./router/private/invoices.routes";
 import adminRouter from "./router/private/admin.routes";
 import cookieParser from "cookie-parser";
 import linesRouter from "./router/private/lines.routes";
@@ -16,6 +13,12 @@ import articlesRouter from "./router/private/articles.routes";
 import distributorsRouter from "./router/private/distributors.routes";
 import publicDistributorsRouter from "./router/public/distributor.routes";
 import publicArticlesRouter from "./router/public/articles.routes";
+import checkoutRouter from "./router/private/checkout.routes";
+import webhookRouter from "./router/private/webhooks.routes";
+import publicInvoicesRouter from "./router/public/public-invoices.routes";
+import invoicesRouter from "./router/private/invoices.routes";
+import contactRouter from "./router/public/contact.routes";
+import ordersRouter from "./router/private/orders.routes";
 
 const app = express();
 
@@ -23,6 +26,7 @@ const app = express();
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://frontend.pinturaspvccolors.com",
+  "https://theaceous-indorsable-lilliana.ngrok-free.dev"
 ];
 
 const UPLOAD_BASE_DIR =
@@ -73,11 +77,16 @@ app.use("/api/public/lines", publicLinesRouter);
 app.use("/api/public/products", publicProductRouter);
 app.use("/api/public/distributors", publicDistributorsRouter);
 app.use("/api/public/articles", publicArticlesRouter);
+app.use("/api/public/contact", contactRouter);
 app.use("/api/articles", articlesRouter);
 app.use("/api/distributors", distributorsRouter);
 // app.use("/api/uploads", uploadRoutes);
-// app.use("/api/payments", paymentsRouter);
-// app.use("/api/invoices", invoicesRouter);
+app.use("/api/checkout", checkoutRouter);
+app.use("/api/checkout", checkoutRouter);
+app.use("/api/webhooks", webhookRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/public/invoices", publicInvoicesRouter);
+app.use("/api/invoices", invoicesRouter);
+app.use("/api/orders", ordersRouter);
 
 export default app;
