@@ -207,7 +207,7 @@ export type ProductColorOrderByWithRelationInput = {
 
 export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  productId_value?: Prisma.ProductColorProductIdValueCompoundUniqueInput
+  productId_groupId_value?: Prisma.ProductColorProductIdGroupIdValueCompoundUniqueInput
   AND?: Prisma.ProductColorWhereInput | Prisma.ProductColorWhereInput[]
   OR?: Prisma.ProductColorWhereInput[]
   NOT?: Prisma.ProductColorWhereInput | Prisma.ProductColorWhereInput[]
@@ -218,7 +218,7 @@ export type ProductColorWhereUniqueInput = Prisma.AtLeast<{
   groupId?: Prisma.StringNullableFilter<"ProductColor"> | string | null
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   group?: Prisma.XOR<Prisma.ProductColorGroupNullableScalarRelationFilter, Prisma.ProductColorGroupWhereInput> | null
-}, "id" | "productId_value">
+}, "id" | "productId_groupId_value">
 
 export type ProductColorOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -315,8 +315,9 @@ export type ProductColorOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProductColorProductIdValueCompoundUniqueInput = {
+export type ProductColorProductIdGroupIdValueCompoundUniqueInput = {
   productId: string
+  groupId: string
   value: string
 }
 

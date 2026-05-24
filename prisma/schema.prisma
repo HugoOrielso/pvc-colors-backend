@@ -129,7 +129,7 @@ model ProductColor {
   groupId String?
   group   ProductColorGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
-  @@unique([productId, value])
+  @@unique([productId, groupId, value])
   @@index([productId])
   @@index([groupId])
 }
