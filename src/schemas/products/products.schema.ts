@@ -147,16 +147,28 @@ const hasNoRepeatedColors = (data: {
     colors: { value: string }[];
   }[];
 }) => {
+  const normalize = (value: string) => value.trim().toLowerCase();
+
+  // Colores simples: no se pueden repetir entre ellos
   const simpleColors = data.colors ?? [];
+  const simpleValues = simpleColors.map((color) => normalize(color.value));
 
-  const groupedColors =
-    data.colorGroups?.flatMap((group) => group.colors) ?? [];
+  if (new Set(simpleValues).size !== simpleValues.length) {
+    return false;
+  }
 
-  const values = [...simpleColors, ...groupedColors].map((color) =>
-    color.value.trim().toLowerCase()
-  );
+  // Dentro de cada grupo: no se pueden repetir
+  const groups = data.colorGroups ?? [];
 
-  return new Set(values).size === values.length;
+  for (const group of groups) {
+    const groupValues = group.colors.map((color) => normalize(color.value));
+
+    if (new Set(groupValues).size !== groupValues.length) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 const hasNoRepeatedPresentations = (data: {
