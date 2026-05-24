@@ -5,8 +5,8 @@ import { createProduct } from "../../../services/products/create-product.service
 import multer from "multer";
 
 type ProductFiles = {
-  images?: Express.Multer.File[];
-  technicalSheet?: Express.Multer.File[];
+    images?: Express.Multer.File[];
+    technicalSheet?: Express.Multer.File[];
 };
 
 export async function createProductController(req: Request, res: Response) {
@@ -15,7 +15,7 @@ export async function createProductController(req: Request, res: Response) {
 
         const files = req.files as ProductFiles | undefined;
 
-        const imageFiles = files?.images ??  [];
+        const imageFiles = files?.images ?? [];
         const technicalSheetFile = files?.technicalSheet?.[0];
 
         if (!imageFiles.length) {
@@ -59,9 +59,13 @@ export async function createProductController(req: Request, res: Response) {
             data: product,
         });
     } catch (error: any) {
+        console.log(error)
         if (error?.code === "P2002") {
+            const target = error?.meta?.target;
+
             return res.status(409).json({
-                message: "Ya existe un producto con ese slug",
+                message: "Ya existe un registro con un valor único repetido",
+                target,
             });
         }
 
