@@ -196,86 +196,84 @@ export async function createWompiCheckout(
       ? "https://sandbox.wompi.co/v1"
       : "https://production.wompi.co/v1";
 
-    const wompiResponse = await fetch(`${wompiBaseUrl}/payment_links`, 
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${privateKey}`,
-            "Content-Type": "application/json",
+    const wompiResponse = await fetch(`${wompiBaseUrl}/payment_links`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${privateKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: `Pedido ${reference}`,
+          description: safeItems
+            .map(
+              (item) =>
+                `${item.product.name} - ${item.presentation.name} x${item.quantity}`
+            )
+            .join(", "),
+          single_use: true,
+          collect_shipping: false,
+          currency: "COP",
+          amount_in_cents: amountInCents,
+          redirect_url: `${frontendUrl}/payments/${reference}`,
+          reference,
+          image_url: null,
+          customer_data: {
+            email: customer.email,
+            full_name: customer.fullName,
+            phone_number: customer.phone,
+            legal_id: customer.documentNumber,
+            legal_id_type: wompiLegalIdTypeMap[customer.documentType] ?? "CC",
           },
-          body: JSON.stringify({
-            name: `Pedido ${reference}`,
-            description: safeItems
-              .map(
-                (item) =>
-                  `${item.product.name} - ${item.presentation.name} x${item.quantity}`
-              )
-              .join(", "),
-            single_use: true,
-            collect_shipping: false,
-            currency: "COP",
-            amount_in_cents: amountInCents,
-            redirect_url: `${frontendUrl}/payments/${reference}`,
-            reference,
-            image_url: null,
-            customer_data: {
-              email: customer.email,
-              full_name: customer.fullName,
-              phone_number: customer.phone,
-              legal_id: customer.documentNumber,
-              legal_id_type: wompiLegalIdTypeMap[customer.documentType] ?? "CC",
-            },
-          }),
-        }
-      );
+        }),
+      }
+    );
 
-      const wompiData = await wompiResponse.json();
+    const wompiData = await wompiResponse.json();
 
-console.log("Wompi response:", JSON.stringify(wompiData, null, 2));
+    if (!wompiResponse.ok) {
+      console.error("❌ Wompi error:", JSON.stringify(wompiData, null, 2));
 
-      if(!wompiResponse.ok) {
-        console.error("❌ Wompi error:", JSON.stringify(wompiData, null, 2));
+      await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          status: OrderStatus.CANCELLED,
+          paymentProvider: "WOMPI",
+          paymentReference: reference,
+        },
+      });
+
+      return res.status(500).json({
+        message: "Error creando link de pago en Wompi",
+      });
+    }
+
+    const paymentLinkId = wompiData?.data?.id;
 
     await prisma.order.update({
       where: { id: order.id },
       data: {
-        status: OrderStatus.CANCELLED,
         paymentProvider: "WOMPI",
-        paymentReference: reference,
+        paymentReference: paymentLinkId ?? reference,
       },
     });
 
+    return res.status(200).json({
+      ok: true,
+      data: {
+        orderId: order.id,
+        reference,
+        paymentUrl: `https://checkout.wompi.co/l/${paymentLinkId}`,
+      },
+    });
+  } catch (error) {
+    console.error("Error creando checkout de Wompi:", error);
+
     return res.status(500).json({
-      message: "Error creando link de pago en Wompi",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Error interno al iniciar el checkout",
     });
   }
-
-    const paymentLinkId = wompiData?.data?.id;
-
-  await prisma.order.update({
-    where: { id: order.id },
-    data: {
-      paymentProvider: "WOMPI",
-      paymentReference: paymentLinkId ?? reference,
-    },
-  });
-
-  return res.status(200).json({
-    ok: true,
-    data: {
-      orderId: order.id,
-      reference,
-      paymentUrl: `https://checkout.wompi.co/l/${paymentLinkId}`,
-    },
-  });
-} catch (error) {
-  console.error("Error creando checkout de Wompi:", error);
-
-  return res.status(500).json({
-    message:
-      error instanceof Error
-        ? error.message
-        : "Error interno al iniciar el checkout",
-  });
-}
 }

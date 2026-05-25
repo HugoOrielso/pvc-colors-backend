@@ -2,20 +2,28 @@
 
 import bcrypt from "bcrypt";
 import { prisma } from "./db";
+import { UserRole } from "../generated/prisma/enums";
 
 export async function runSeed() {
+  const password = "Pvccolors@2026"; 
   const users = [
     {
       name: "Administrador",
-      email: "admin@demo.com",
-      password: "contraseña",
-      role: "ADMIN",
+      email: "admin@pvccolors.com",
+      password,
+      role: "ADMIN" as UserRole,
     },
     {
-      name: "Auxiliar",
-      email: "auxiliar@demo.com",
-      password: "contraseña",
-      role: "OPERATOR",
+      name: "Gerente General",
+      email: "gerente@pvccolors.com",
+      password,
+      role: "GERENT" as UserRole,
+    },
+    {
+      name: "Operador",
+      email: "operador@pvccolors.com",
+      password,
+      role: "OPERATOR" as UserRole,
     },
   ];
 
@@ -33,7 +41,7 @@ export async function runSeed() {
         name: user.name,
         email: user.email,
         password: hashedPassword,
-        role: user.role as "ADMIN" | "OPERATOR",
+        role: user.role as UserRole,
         isActive: true,
       },
     });

@@ -59,7 +59,6 @@ export async function createProductController(req: Request, res: Response) {
             data: product,
         });
     } catch (error: any) {
-        console.log(error)
         if (error?.code === "P2002") {
             const target = error?.meta?.target;
 

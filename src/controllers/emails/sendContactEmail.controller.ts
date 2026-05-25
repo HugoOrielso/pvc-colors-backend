@@ -31,7 +31,7 @@ export async function sendContactEmailController(
         const { data, error } = await resend.emails.send({
             from: fromEmail,
 
-            to: ["exportacionespvc2026@gmail.com"],
+            to: ["pvcolors19@gmail.com"],
 
             replyTo: email,
 

@@ -40,7 +40,6 @@ export async function wompiWebhook(req: Request, res: Response) {
     if (payload.event !== "transaction.updated") {
       return res.status(200).json({ ok: true, ignored: true });
     }
-    console.log(payload)
     const transaction = payload.data?.transaction;
 
     if (!transaction) {
