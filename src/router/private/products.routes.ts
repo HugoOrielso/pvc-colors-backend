@@ -14,6 +14,8 @@ import { updateProductController } from "../../controllers/products/update/updat
 import { getProductsController } from "../../controllers/products/getProducts/get-products.controller";
 import { deleteImageController } from "../../controllers/products/deleteImage/delete-image.controller";
 import { deleteColorController } from "../../controllers/products/deleteColor/deleteColor.controller";
+import { deactivateProductImageController, setMainProductImageController } from "../../controllers/productImages/productImages.controller";
+import { replaceProductImageController } from "../../controllers/productImages/replaceImage.controller";
 
 
 const productsRouter = Router();
@@ -35,7 +37,6 @@ productsRouter.post(
   createProductController
 );
 
-
 productsRouter.patch(
   "/:id",
   requireAuth,
@@ -49,5 +50,26 @@ productsRouter.patch(
   updateProductController
 );
 
+productsRouter.patch(
+  "/:productId/images/:imageId/main",
+  requireAuth,
+  requireRole(UserRole.ADMIN),
+  setMainProductImageController
+);
+
+productsRouter.patch(
+  "/:productId/images/:imageId/deactivate",
+  requireAuth,
+  requireRole(UserRole.ADMIN),
+  deactivateProductImageController
+);
+
+productsRouter.patch(
+  "/:productId/images/:imageId/replace",
+  requireAuth,
+  requireRole(UserRole.ADMIN),
+  uploadProductImage.single("image"),
+  replaceProductImageController
+);
 
 export default productsRouter;

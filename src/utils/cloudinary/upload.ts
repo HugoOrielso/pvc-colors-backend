@@ -33,8 +33,6 @@ export function uploadPdfBufferToCloudinary(
     stream.end(fileBuffer);
   });
 }
-
-
 // ============================
 // 🔹 UPLOAD IMAGE
 // ============================
@@ -80,8 +78,6 @@ export async function deleteImageFromCloudinary(publicId: string) {
     resource_type: "image",
   });
 }
-
-
 // ============================
 // 🔹 DELETE PDF (RAW)
 // ============================
@@ -90,8 +86,6 @@ export async function deleteRawFromCloudinary(publicId: string) {
     resource_type: "raw",
   });
 }
-
-
 // ============================
 // 🔹 EXTRAER PUBLIC ID DESDE URL
 // ============================
@@ -109,4 +103,42 @@ export function getCloudinaryPublicId(url: string) {
   } catch {
     return null;
   }
+}
+
+export type CloudinaryImageUploadResult = {
+  secureUrl: string;
+  publicId: string;
+};
+
+export function uploadImageBufferToCloudinaryWithPublicId(
+  fileBuffer: Buffer,
+  folder = "products/images"
+): Promise<CloudinaryImageUploadResult> {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "image",
+        overwrite: false,
+        transformation: [{ quality: "auto", fetch_format: "auto" }],
+      },
+      (error, result) => {
+        if (error) return reject(error);
+
+        if (!result?.secure_url || !result?.public_id) {
+          return reject(
+            new Error("Cloudinary no devolvió secure_url o public_id")
+          );
+        }
+
+        resolve({
+          secureUrl: result.secure_url,
+          publicId: result.public_id,
+        });
+      }
+    );
+
+    stream.on("error", reject);
+    stream.end(fileBuffer);
+  });
 }
