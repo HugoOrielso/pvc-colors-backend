@@ -22,12 +22,13 @@ import ordersRouter from "./router/private/orders.routes";
 
 const app = express();
 
-// ✅ Lista centralizada reutilizada en cors y csrf
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://frontend.pinturaspvccolors.com",
-  "https://theaceous-indorsable-lilliana.ngrok-free.dev"
-];
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS ||
+  "http://localhost:3000"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 const UPLOAD_BASE_DIR =
   process.env.UPLOAD_DIR ||
@@ -42,16 +43,15 @@ app.use("/uploads", express.static(UPLOAD_BASE_DIR));
 app.use(cookieParser());
 
 // ✅ CORS con lista centralizada
-app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ extended: true, limit: "20mb" }));
-
-// ✅ CSRF — bloquea requests no GET de orígenes no permitidos
 app.use(
   cors({
     origin: ALLOWED_ORIGINS,
     credentials: true,
   })
 );
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
+
 
 app.use((req, res, next) => {
   const safeMethods = ["GET", "HEAD", "OPTIONS"];
@@ -84,7 +84,6 @@ app.use("/api/public/contact", contactRouter);
 app.use("/api/articles", articlesRouter);
 app.use("/api/distributors", distributorsRouter);
 // app.use("/api/uploads", uploadRoutes);
-app.use("/api/checkout", checkoutRouter);
 app.use("/api/checkout", checkoutRouter);
 app.use("/api/webhooks", webhookRouter);
 app.use("/api/admin", adminRouter);
