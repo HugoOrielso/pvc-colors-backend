@@ -42,6 +42,10 @@ app.use("/uploads", express.static(UPLOAD_BASE_DIR));
 app.use(cookieParser());
 
 // ✅ CORS con lista centralizada
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
+
+// ✅ CSRF — bloquea requests no GET de orígenes no permitidos
 app.use(
   cors({
     origin: ALLOWED_ORIGINS,
@@ -49,10 +53,6 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: "20mb" }));
-app.use(express.urlencoded({ extended: true, limit: "20mb" }));
-
-// ✅ CSRF — bloquea requests no GET de orígenes no permitidos
 app.use((req, res, next) => {
   const safeMethods = ["GET", "HEAD", "OPTIONS"];
 
@@ -60,11 +60,14 @@ app.use((req, res, next) => {
 
   const origin = req.headers.origin;
 
-  // sin origin = Postman, curl, server-to-server → dejar pasar
+  // Postman, curl, server-to-server
   if (!origin) return next();
 
   if (!ALLOWED_ORIGINS.includes(origin)) {
-    return res.status(403).json({ ok: false, message: "Origen no permitido" });
+    return res.status(403).json({
+      ok: false,
+      message: "Origen no permitido",
+    });
   }
 
   next();
