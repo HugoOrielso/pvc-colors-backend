@@ -150,6 +150,9 @@ export async function createWompiCheckout(
       .randomBytes(4)
       .toString("hex")}`;
 
+    console.log("🟡 Intentando crear orden en DB...");
+
+
     const order = await prisma.order.create({
       data: {
         orderNumber: reference,
@@ -191,6 +194,7 @@ export async function createWompiCheckout(
         customer: true,
       },
     });
+    console.log("✅ Orden creada:", order.id);
 
     const wompiBaseUrl = privateKey.startsWith("prv_test_")
       ? "https://sandbox.wompi.co/v1"
@@ -267,6 +271,8 @@ export async function createWompiCheckout(
       },
     });
   } catch (error) {
+    console.error("💥 ERROR DETALLADO:", JSON.stringify(error, null, 2));
+
     console.error("Error creando checkout de Wompi:", error);
 
     return res.status(500).json({
